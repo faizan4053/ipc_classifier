@@ -5,6 +5,11 @@ to get the files related to this project
 follow this link
 https://drive.google.com/file/d/1bOJ2HeKuxFgwhpBrPGk_tXD3tWSynNBl/view?usp=sharing, https://drive.google.com/file/d/1hqVUfPPgMP_NUcOyM7n3juDZveqzyP9d/view?usp=sharing
 
+to get the original xml file:
+-----------------------------
+(click on this link)
+https://drive.google.com/file/d/1bryEiEUHdwTT-sglJuso_bOeRcUCLo67/view?usp=sharing
+
 Steps to run the codes:
 -----------------------
 1) to process xml file run file :data.py
