@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import nltk 
 from nltk.corpus import stopwords
+from pprint import pprint
+from time import time
 import re
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer 
@@ -94,7 +96,10 @@ y_predict=processor.predict(x_test)
 
 print('accuracy %s' % accuracy_score(y_predict,y_test))
 print(classification_report(y_test,y_predict,target_names=tags))
-print(confusion_matrix(y_test,y_predict))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
 
 #Linear Support Vector Machine
 
@@ -110,7 +115,11 @@ processor.fit(x_train,y_train)
 y_predict=processor.predict(x_test)
 
 print('accuracy %s' % accuracy_score(y_predict,y_test))
-#print(classification_report(y_test,y_predict,target_names=tags))
+print(classification_report(y_test,y_predict,target_names=tags))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
 
 
 
@@ -120,6 +129,8 @@ processor=Pipeline([('vect',CountVectorizer()),
                 ('tranform',TfidfTransformer()),
                 ('sgd',SGDClassifier(loss='squared_hinge',
                 penalty='l2',alpha=1e-5,random_state=42,max_iter=5,tol=None))])
+    
+    
 
 
 processor.fit(x_train,y_train)
@@ -127,6 +138,74 @@ y_predict=processor.predict(x_test)
 
 print('accuracy %s' % accuracy_score(y_predict,y_test))
 print(classification_report(y_test,y_predict,target_names=tags))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
+
+
+#testing for multiple parameters using GridSearchCV
+
+from sklearn.model_selection import GridSearchCV
+
+pipeline = Pipeline([
+    ('vect', CountVectorizer()),
+    ('tfidf', TfidfTransformer()),
+    ('clf', SGDClassifier()),
+])
+    
+
+parameters = {
+    #'vect__max_df': (0.5, 0.75, 1.0),
+    # 'vect__max_features': (None, 5000, 10000, 50000),
+    #'vect__ngram_range': ((1, 1), (1, 2)),  # unigrams or bigrams
+    'tfidf__use_idf': (True, False),
+    #'tfidf__norm': ('l1', 'l2','none'),
+    #'clf__max_iter': (20,),
+    'clf__alpha': (0.00001, 0.000001,0.0000001,0.00000001),
+    'clf__penalty': ('l1','l2', 'elasticnet','none'),
+    'clf__max_iter': (30,40,50),
+}
+
+grid = GridSearchCV(pipeline, parameters, n_jobs=-1, verbose=1)
+
+print("Performing grid search...")
+print("pipeline:", [name for name, _ in pipeline.steps])
+print("parameters:")
+pprint(parameters)
+t0 = time()
+grid.fit(x_train,y_train)
+print("done in %0.3fs" % (time() - t0))
+print()
+print("Best score: %0.3f" % grid.best_score_)
+print("Best parameters set:")
+best_parameters = grid.best_estimator_.get_params()
+for param_name in sorted(parameters.keys()):
+    print("\t%s: %r" % (param_name, best_parameters[param_name]))   
+
+
+
+
+#logistic regression
+
+from sklearn.linear_model import LogisticRegression
+
+processor=Pipeline([('vect',CountVectorizer()),
+                ('tranform',TfidfTransformer()),
+                ('multi',LogisticRegression(n_jobs=4,C=1e5))])
+#lr=LogisticRegression(n_jobs=1,C=1e5)
+processor.fit(x_train,y_train)
+y_predict=processor.predict(x_test)
+print('accuracy %s' % accuracy_score(y_predict,y_test))
+print(classification_report(y_test,y_predict,target_names=tags))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
+
+
+
+
 
 
 
