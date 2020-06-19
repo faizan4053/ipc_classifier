@@ -14,6 +14,8 @@ NOTE:
 ----
 Keep all the files and folders in the same directory
 
+To get a better view of Apis and their outputs please open classifier.ipynb
+
 Steps to run the codes:
 -----------------------
 1) to process xml file run file :data.py
