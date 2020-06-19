@@ -222,6 +222,14 @@ print("Best parameters set:")
 best_parameters = grid.best_estimator_.get_params()
 for param_name in sorted(parameters.keys()):
     print("\t%s: %r" % (param_name, best_parameters[param_name]))   
+
+y_predict=grid.predict(x_test)
+print('accuracy %s' % accuracy_score(y_predict,y_test))
+print(classification_report(y_test,y_predict,target_names=tags))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
     
 
 #using random searchCV
@@ -240,7 +248,7 @@ parameters = {
     'clf__loss':('squared_hinge','hinge','modified_huber','log'),
     'clf__alpha': (0.00001, 0.000001,0.0000001,0.00000001),
     'clf__penalty': ('l1','l2', 'elasticnet','none'),
-    'clf__max_iter': (20,50,80,100),
+    'clf__max_iter': (40,50,80,100),
 }
 
 rscv = RandomizedSearchCV(pipeline, parameters, n_jobs=-1, verbose=1)
@@ -259,11 +267,13 @@ best_parameters = rscv.best_estimator_.get_params()
 for param_name in sorted(parameters.keys()):
     print("\t%s: %r" % (param_name, best_parameters[param_name])) 
 
-
-
-
-
-
+y_predict=rscv.predict(x_test)
+print('accuracy %s' % accuracy_score(y_predict,y_test))
+print(classification_report(y_test,y_predict,target_names=tags))
+count_misclassified = (y_test != y_predict).sum()
+count_classified=(y_test==y_predict).sum()
+print("misclassified:",count_misclassified)
+print("classified:",count_classified)
 
 #logistic regression
 
@@ -431,7 +441,7 @@ from sklearn.svm import SVC
 
 processor=Pipeline([('vect',CountVectorizer()),
                 ('tranform',TfidfTransformer()),
-                ('multi',SVC())])
+                ('multi',SVC(kernel="linear",gamma="auto"))])
 
 processor.fit(x_train,y_train)
 y_predict=processor.predict(x_test)
