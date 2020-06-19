@@ -10,6 +10,10 @@ to get the original xml file:
 (click on this link)
 https://drive.google.com/file/d/1bryEiEUHdwTT-sglJuso_bOeRcUCLo67/view?usp=sharing
 
+NOTE:
+----
+Keep all the files and folders in the same directory
+
 Steps to run the codes:
 -----------------------
 1) to process xml file run file :data.py
